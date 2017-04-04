@@ -4,6 +4,8 @@ import datetime
 import time
 
 file = open("names.txt", 'w')
+found_users = []
+KEEP_REQ = 10
 
 def numUniqueLang(languages):
     uniq = []
@@ -17,8 +19,6 @@ def numUniqueLang(languages):
 def userRepoURL(user):
     return "https://api.github.com/users/" + user + "/repos"
 
-found_users = []
-
 #need to check if I will go over limit of requests
 def wait_check():
     get_rate = "https://api.github.com/rate_limit"
@@ -26,7 +26,7 @@ def wait_check():
     req_remaining = wait_info['resources']['core']['remaining']
     req_remaining = int(req_remaining)
     
-    if req_remaining > 5:
+    if req_remaining > KEEP_REQ:
         return
     
     reset = wait_info['resources']['core']['reset']
