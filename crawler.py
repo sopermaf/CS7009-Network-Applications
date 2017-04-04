@@ -59,7 +59,7 @@ def searchUser(user):
         for contributor in contrib_info:
             contrib_username = contributor['login']
             if contrib_username != user:
-                searchUser(user)
+                searchUser(contrib_username)
 
     
 current_user = "GrahamCampbell"
