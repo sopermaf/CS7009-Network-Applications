@@ -12,7 +12,7 @@ u2 = db.nodes.create(name="Daniela")
 user.add(u2)
  
 beer = db.labels.create("Beer")
-b1 = db.nodes.create(name="Punk IPA")
+b1 = db.nodes.create(name="Punk IPA", type="Pale Ale")
 b2 = db.nodes.create(name="Hoegaarden Rosee")
 # You can associate a label with many nodes in one go
 beer.add(b1, b2)
