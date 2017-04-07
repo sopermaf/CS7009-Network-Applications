@@ -118,7 +118,7 @@ def search_userList(user):
         repo_nm = repo['name']
         repo_lang = repo['language']
         repo_nodes[repo_nm] = db.nodes.create(name=repo_nm, size=repo['size'], watchers=repo['watchers'], stargazers=repo['stargazers_count'], homepage=repo['homepage'])
-        repo_label(repo_nodes[repo_nm])
+        repo_label.add(repo_nodes[repo_nm])
         
         #relationships with owner for repo and lang
         if repo_lang not in language_nodes:
@@ -152,7 +152,7 @@ third_user = "weierophinney"
 guy_from_lecture = "afc163"
 interesting = "google"
 
-users_to_search.append(interesting)
+users_to_search.append(second_user)
 
 #done iteratively to avoid recursive depth limit
 count = 0
