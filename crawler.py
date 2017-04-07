@@ -21,29 +21,10 @@ location_label = db.labels.create("GitHub Locations")
 repo_label = db.labels.create("GitHub Repositories")
 language_label = db.labels.create("Programming Languages")
 
-
-KEEP_REQ = 5       #change after testing crawling works
-
-def numUniqueLang(languages):
-    uniq = []
-    for lang in languages:
-        if lang not in uniq:
-            uniq.append(lang)
-    
-    print(uniq)
-    return len(uniq)
+KEEP_REQ = 1       #keeps a set number of requests left within your limit for manual use
 
 def userRepoURL(user):
     return "https://api.github.com/users/" + user + "/repos"
-
-def repoLanguages(info_repos):
-    lang = []
-    for repo in info_repos:
-        curr_lang = repo['language']
-        if curr_lang not in lang and curr_lang != None:
-            lang.append(repo['language'])
-            
-    return lang
     
 #need to check if I will go over limit of requests
 def wait_check():
@@ -119,7 +100,8 @@ def makeUser(user):
     #location node made
     if location not in location_nodes:      #avoid duplication
         location_nodes[location] = db.nodes.create(location_name=location)
-    
+        location_label.add(location_nodes[location])
+        
     #link user with location
     user_nodes[username].relationships.create("lives in", location_nodes[location])
      
@@ -127,7 +109,7 @@ def makeUser(user):
 def search_userList(user):
     wait_check()        #avoid bad request
     
-    #POSSIBLE TO CHEKC IF THEY HAVE A REPO FIRST???
+    #POSSIBLE TO CHECK IF THEY HAVE A REPO FIRST???
     response1 = requests.get(userRepoURL(user))
     user_repo_info = json.loads(response1.text)  
     
@@ -136,11 +118,13 @@ def search_userList(user):
         repo_nm = repo['name']
         repo_lang = repo['language']
         repo_nodes[repo_nm] = db.nodes.create(name=repo_nm, size=repo['size'], watchers=repo['watchers'], stargazers=repo['stargazers_count'], homepage=repo['homepage'])
+        repo_label(repo_nodes[repo_nm])
         
         #relationships with owner for repo and lang
         if repo_lang not in language_nodes:
             language_nodes[repo_lang] = db.nodes.create(lang_name=repo_lang)
-        
+            language_label.add(language_nodes[repo_lang])
+            
         #relationships with owner
         user_nodes[user].relationships.create("knows", language_nodes[repo_lang])
         user_nodes[user].relationships.create("owns", repo_nodes[repo_nm])
@@ -166,8 +150,9 @@ top_user = "GrahamCampbell"
 second_user = "fabpot"
 third_user = "weierophinney"
 guy_from_lecture = "afc163"
+interesting = "google"
 
-users_to_search.append(guy_from_lecture)
+users_to_search.append(interesting)
 
 #done iteratively to avoid recursive depth limit
 count = 0
@@ -175,3 +160,4 @@ for user_next in users_to_search:
     makeUser(user_next)
     search_userList(user_next)
     print("Currently on index", count, "of", len(users_to_search))
+    count += 1
