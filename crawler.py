@@ -17,7 +17,7 @@ language_nodes = {}
 pw = getpass.getpass()
 db = GraphDatabase("http://localhost:7474", username="neo4j", password=pw)
 user_label = db.labels.create("GitHub Users")
-location_label = db.labels.create("GitHub Locations")
+location_label = db.labels.create("Locations")
 repo_label = db.labels.create("GitHub Repositories")
 language_label = db.labels.create("Programming Languages")
 
@@ -92,7 +92,7 @@ def makeUser(user):
     location = user_json['location']
     
     #user node made
-    user_nodes[username] = db.nodes.create(username=user_json['login'], name=user_json['name'], company=user_json['company'],
+    user_nodes[username] = db.nodes.create(name=user_json['login'], real_name=user_json['name'], company=user_json['company'],
     hireable = user_json['hireable'], public_repos=user_json['public_repos'], bio=user_json['bio'],
     email=user_json['email'], num_followers=user_json['followers'], num_following=user_json['following'])
     user_label.add(user_nodes[username])
@@ -122,7 +122,7 @@ def search_userList(user):
         
         #relationships with owner for repo and lang
         if repo_lang not in language_nodes:
-            language_nodes[repo_lang] = db.nodes.create(lang_name=repo_lang)
+            language_nodes[repo_lang] = db.nodes.create(name=repo_lang)
             language_label.add(language_nodes[repo_lang])
             
         #relationships with owner
